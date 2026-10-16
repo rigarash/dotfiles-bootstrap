@@ -29,20 +29,23 @@ GitHub authentication requires confirmation in a browser on a new machine.
 
 ### Linux
 
-The script installs the chezmoi binary to `~/.local/bin` without root
-privileges, adds GitHub's SSH host keys to `~/.ssh/known_hosts`, and applies
-the dotfiles repository over SSH. No GitHub credentials are stored on the
-server.
+The script adds GitHub's SSH host keys to `~/.ssh/known_hosts`, checks that
+it can authenticate to GitHub over SSH, installs the chezmoi binary to
+`~/.local/bin` without root privileges, and applies the dotfiles repository
+over SSH. It needs `curl`, the OpenSSH client, and a key registered on GitHub:
 
-Log in with SSH agent forwarding, using an agent that holds a key registered
-on GitHub, before running the script:
+- On a local machine such as WSL, the key is taken from the SSH agent or
+  from `~/.ssh`. A key with a passphrase must be loaded into an agent with
+  `ssh-add` first.
+- On a server, log in with agent forwarding from a machine whose agent
+  holds the key, so that no GitHub credentials are stored on the server:
 
-```bash
-ssh -A server
-```
+  ```bash
+  ssh -A server
+  ```
 
-The server needs `curl` and the OpenSSH client.
+When authentication fails, the script says what to fix for the case at hand.
 
-On first run, chezmoi asks for the email address for git and the machine
-profile (`workstation` or `server`). Press Enter to accept the defaults
-for a server.
+On first run, chezmoi asks for the email address for git and, except on WSL,
+for the machine profile (`workstation` or `server`). The profile defaults to
+`server` when logged in over SSH and to `workstation` otherwise.
